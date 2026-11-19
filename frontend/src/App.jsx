@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import client from "./shared/api/client";
+import PricingPage from "./modules/pricing/pages/PricingPage";
 
 function Landing() {
   const [status, setStatus] = useState("checking...");
@@ -39,7 +40,10 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
-        {/* every other page goes inside <Protected> */}
+        <Route
+          path="/owner/pricing"
+          element={<Protected><PricingPage /></Protected>}
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
