@@ -1,8 +1,14 @@
+# Java / Maven
 target/
+*.class
+# Node / Vite
 node_modules/
 dist/
+# Editors
 .idea/
 *.iml
 .vscode/
+# Secrets (never commit)
 .env
 application-local.properties
+*.sql.gz
