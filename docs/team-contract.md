@@ -162,3 +162,37 @@ looking like one site. Build each page from its UI image. If something in the de
 fit the rules above, ask before changing it.
 
 Thanks, everyone. Let's keep pull requests small and talk early when something blocks you.
+
+## Adding your pages
+
+The shared layout is ready, so you only build what goes inside it.
+
+Every staff page is already listed in `frontend/src/shared/layout/menus.js`, with its address and
+the roles that can open it. Until you build it, it shows a placeholder. To swap in your real page:
+
+1. Build the page in your own folder, for example
+   `frontend/src/modules/inventory/pages/ProductListPage.jsx`.
+2. Create `routes.jsx` in your module folder (once) and list your pages there:
+
+   ```jsx
+   import ProductListPage from "./pages/ProductListPage";
+   export default [
+     { path: "/staff/products", element: <ProductListPage /> },
+   ];
+   ```
+
+   The path has to match the one in `menus.js` exactly. The app picks it up by itself, so you
+   never need to edit `App.jsx`.
+3. Start from the placeholder's layout: `PageHeader` at the top, a row of `StatCard`s if your
+   page has numbers, then the `.filters` row and a `.table` inside `.table-wrap`. Forms use
+   `.form-grid`, `.field` and `.form-actions`. These live in `frontend/src/shared/components/`.
+4. Don't edit `menus.js`, the layout or `index.css` yourself. If you need a new page, a different
+   menu name or another role on a page, tell me and I'll change it.
+
+Customer pages (shop, cart, checkout, my orders and so on) work the same way, using the paths
+listed in `CUSTOMER_PAGES` in `App.jsx`.
+
+**Testing before the real login exists:** open the browser console (F12) and run
+`localStorage.setItem("token","dev"); localStorage.setItem("role","OWNER"); localStorage.setItem("name","Test")`.
+Change `OWNER` to `ORDER_STAFF`, `INVENTORY_MANAGER`, `PACKER` or `DRIVER` to see what each role
+sees. Run `localStorage.clear()` to log out. Once Member 2's login is merged, use that instead.
