@@ -1,0 +1,54 @@
+.ph { position: sticky; top: 0; z-index: 20; background: var(--surface); border-bottom: 1px solid var(--border); }
+
+.ph-promo {
+  background: var(--deep-plum); color: var(--white);
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+  font-size: var(--fs-tiny); font-weight: 600; padding: 7px 16px; text-align: center;
+}
+.ph-promo-sep { opacity: 0.6; margin: 0 6px; }
+
+.ph-bar {
+  max-width: 1200px; margin: 0 auto; padding: 12px 32px;
+  display: flex; align-items: center; gap: 32px;
+}
+
+.ph-logo {
+  display: flex; flex-direction: column; text-decoration: none;
+  color: var(--primary); font-family: var(--font-logo); font-size: 1.2rem; line-height: 1.2;
+}
+.ph-logo span:last-child { display: inline-flex; align-items: center; gap: 4px; }
+
+.ph-nav { display: flex; gap: 28px; }
+.ph-nav a {
+  color: var(--text); text-decoration: none; font-family: var(--font-heading);
+  font-weight: 600; font-size: var(--fs-small); padding: 6px 0; border-bottom: 2px solid transparent;
+}
+.ph-nav a.active, .ph-nav a:hover { color: var(--primary); border-bottom-color: var(--primary); }
+
+.ph-search {
+  flex: 1; max-width: 420px; display: flex; align-items: center; gap: 8px;
+  background: var(--blush); border: 1px solid var(--border); border-radius: 999px; padding: 8px 16px;
+  color: var(--text-muted);
+}
+.ph-search input {
+  border: none; background: transparent; outline: none; flex: 1;
+  font: inherit; font-size: var(--fs-small); color: var(--text);
+}
+
+.ph-icons { margin-left: auto; display: flex; align-items: center; gap: 18px; }
+.ph-icon { position: relative; color: var(--primary); display: inline-flex; }
+.ph-dot {
+  position: absolute; top: -1px; right: -1px; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--primary); border: 1.5px solid var(--white);
+}
+.ph-user {
+  background: var(--accent-light); border-radius: 50%; width: 34px; height: 34px;
+  align-items: center; justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .ph-bar { flex-wrap: wrap; gap: 14px; padding: 10px 16px; }
+  .ph-nav { order: 3; width: 100%; gap: 20px; }
+  .ph-search { order: 4; max-width: none; flex-basis: 100%; }
+  .ph-promo-sep, .ph-promo-extra { display: none; }
+}
