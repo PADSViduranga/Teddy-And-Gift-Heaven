@@ -1,4 +1,4 @@
-package backend.config;
+package com.teddygiftheaven.backend.config;
 
 import java.util.List;
 
