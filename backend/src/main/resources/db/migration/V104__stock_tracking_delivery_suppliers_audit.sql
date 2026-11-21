@@ -1,12 +1,14 @@
 -- V104: suppliers and purchasing, stock tracking, price history, deliveries, audit log
+-- Concepts: FOREIGN KEYs to several parents, approval columns, JSON audit columns, indexes for scheduled jobs
 
 CREATE TABLE suppliers (
   supplier_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   name        VARCHAR(120) NOT NULL,
-  phone       VARCHAR(20)  NULL,
+  phone       VARCHAR(15)  NULL,
   email       VARCHAR(150) NULL,
   address     VARCHAR(255) NULL,
-  CONSTRAINT uq_suppliers_name UNIQUE (name)
+  CONSTRAINT uq_suppliers_name UNIQUE (name),
+  CONSTRAINT ck_suppliers_email CHECK (email IS NULL OR email LIKE '%_@_%._%')
 ) ENGINE=InnoDB;
 
 CREATE TABLE supplier_prices (
@@ -48,7 +50,7 @@ CREATE TABLE purchase_order_items (
   CONSTRAINT fk_poi_item FOREIGN KEY (item_id) REFERENCES stock_items(item_id)
 ) ENGINE=InnoDB;
 
--- every change to stock is logged here; triggers keep stock_items in step with this table
+-- every stock change is logged here; Member 4's trigger keeps stock_items in step with it
 CREATE TABLE stock_movements (
   movement_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   item_id     BIGINT NOT NULL,
@@ -61,6 +63,7 @@ CREATE TABLE stock_movements (
   reason      VARCHAR(255) NULL,
   created_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT ck_movements_qty CHECK (quantity <> 0),
+  CONSTRAINT ck_movements_sign CHECK (type = 'ADJUSTMENT' OR quantity > 0),
   CONSTRAINT fk_sm_item     FOREIGN KEY (item_id)     REFERENCES stock_items(item_id),
   CONSTRAINT fk_sm_creator  FOREIGN KEY (created_by)  REFERENCES users(user_id),
   CONSTRAINT fk_sm_approver FOREIGN KEY (approved_by) REFERENCES users(user_id),
@@ -85,7 +88,7 @@ CREATE TABLE notifications (
   notification_id BIGINT AUTO_INCREMENT PRIMARY KEY,
   item_id         BIGINT NULL,
   order_id        BIGINT NULL,
-  type            ENUM('LOW_STOCK','NEW_ORDER','PAYMENT_EXPIRING') NOT NULL,
+  type            ENUM('LOW_STOCK','NEW_ORDER','PAYMENT_EXPIRING','SHORT_DELIVERY') NOT NULL,
   message         VARCHAR(255) NOT NULL,
   status          ENUM('OPEN','READ','RESOLVED') NOT NULL DEFAULT 'OPEN',
   created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -106,25 +109,27 @@ CREATE TABLE price_history (
 
 CREATE TABLE deliveries (
   delivery_id    BIGINT AUTO_INCREMENT PRIMARY KEY,
-  order_id       BIGINT       NOT NULL,
-  driver_id      BIGINT       NOT NULL,
-  time_slot      VARCHAR(30)  NULL,
+  order_id       BIGINT        NOT NULL,
+  driver_id      BIGINT        NOT NULL,
+  time_slot      VARCHAR(30)   NULL,
   status         ENUM('ASSIGNED','DELIVERED','FAILED') NOT NULL DEFAULT 'ASSIGNED',
-  failure_reason VARCHAR(255) NULL,
-  delivered_at   DATETIME     NULL,
+  failure_reason VARCHAR(255)  NULL,
+  assigned_at    DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  delivered_at   DATETIME      NULL,
   cash_collected DECIMAL(10,2) NULL,
   CONSTRAINT uq_deliveries_order UNIQUE (order_id),
   CONSTRAINT ck_deliveries_cash CHECK (cash_collected IS NULL OR cash_collected >= 0),
+  CONSTRAINT ck_deliveries_failure CHECK (status <> 'FAILED' OR failure_reason IS NOT NULL),
   CONSTRAINT fk_del_order  FOREIGN KEY (order_id)  REFERENCES orders(order_id),
   CONSTRAINT fk_del_driver FOREIGN KEY (driver_id) REFERENCES drivers(staff_id)
 ) ENGINE=InnoDB;
 
--- append-only record of who changed what (written by triggers; nobody edits it)
+-- append-only record of who changed what (filled by Member 3's triggers)
 CREATE TABLE audit_log (
   audit_id   BIGINT AUTO_INCREMENT PRIMARY KEY,
-  user_id    BIGINT       NULL,
-  table_name VARCHAR(64)  NOT NULL,
-  record_id  VARCHAR(64)  NOT NULL,
+  user_id    BIGINT      NULL,
+  table_name VARCHAR(64) NOT NULL,
+  record_id  VARCHAR(64) NOT NULL,
   action     ENUM('INSERT','UPDATE','DELETE') NOT NULL,
   old_value  JSON NULL,
   new_value  JSON NULL,

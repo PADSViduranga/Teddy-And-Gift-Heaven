@@ -1,48 +1,91 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap");
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/nunito/400.css";
+@import "@fontsource/nunito/600.css";
+@import "@fontsource/nunito/700.css";
+@import "@fontsource/pacifico/400.css";
 
 :root {
-  --primary: #8B2E63;
-  --primary-hover: #6F204E;
-  --accent: #D81B60;
-  --accent-light: #FFD6E7;
-  --background: #FFF7F9;
-  --surface: #FFFFFF;
-  --text: #4A1E3F;
-  --text-muted: #7A6173;
-  --border: #F0DDE7;
+  /* the nine brand colors */
+  --berry: #8B2E63;
+  --white: #FFFFFF;
+  --muted-mauve: #8A7182;
+  --soft-pink: #F0DDE7;
+  --deep-plum: #4A1E3F;
+  --warm-cream: #F5EDE7;
+  --near-white-pink: #FFF7F9;
+  --pale-blush: #FBF1F5;
+  --light-pink: #FFD6E7;
 
-  --success: #2E7D4F;
-  --warning: #B7791F;
-  --danger: #C62828;
-  --info: #2F6DA3;
+  /* roles: use these in components, never hex codes */
+  --primary: var(--berry);
+  --primary-hover: #74244F;
+  --surface: var(--white);
+  --background: var(--near-white-pink);
+  --text: var(--deep-plum);
+  --text-muted: var(--muted-mauve);
+  --border: var(--soft-pink);
+  --blush: var(--pale-blush);
+  --cream: var(--warm-cream);
+  --accent-light: var(--light-pink);
 
-  --font-heading: "Poppins", sans-serif;
-  --font-body: "Nunito", sans-serif;
+  /* status colors: badges and messages only */
+  --success: #2E7D4F;  --success-bg: #DDF0E4;
+  --warning: #B7791F;  --warning-bg: #FBEBC8;
+  --danger:  #C62828;  --danger-bg:  #F8DADF;
+  --info:    #2F6DA3;  --info-bg:    #DCE9F4;
+
+  /* fonts */
+  --font-heading: "Poppins", system-ui, sans-serif;
+  --font-body: "Nunito", system-ui, sans-serif;
+  --font-logo: "Pacifico", cursive;
+
+  /* type scale */
+  --fs-hero: 48px;
+  --fs-h1: 28px;
+  --fs-h2: 24px;
+  --fs-h3: 18px;
+  --fs-body: 16px;
+  --fs-small: 14px;
+  --fs-table-head: 13px;
+  --fs-tiny: 12px;
+  --fs-stat: 28px;
 }
+
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
   background: var(--background);
   color: var(--text);
   font-family: var(--font-body);
-  font-size: 16px;
+  font-size: var(--fs-body);
   line-height: 1.6;
 }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  line-height: 1.3;
-}
+h1, h2, h3 { font-family: var(--font-heading); color: var(--text); line-height: 1.2; margin: 0 0 8px; }
+h1 { font-size: var(--fs-h1); font-weight: 700; }
+h2 { font-size: var(--fs-h2); font-weight: 700; }
+h3 { font-size: var(--fs-h3); font-weight: 600; }
 
-.btn-primary {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  padding: 12px 24px;
-  font-family: var(--font-heading);
-  font-weight: 600;
-  cursor: pointer;
+.eyebrow {
+  font-family: var(--font-heading); font-size: var(--fs-tiny); font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary);
 }
+.text-muted { color: var(--text-muted); font-size: var(--fs-small); }
+.logo { font-family: var(--font-logo); color: var(--primary); }
+
+.btn {
+  font-family: var(--font-heading); font-size: var(--fs-small); font-weight: 600;
+  border-radius: 10px; padding: 10px 20px; border: 2px solid transparent; cursor: pointer;
+}
+.btn-primary { background: var(--primary); color: var(--white); }
 .btn-primary:hover { background: var(--primary-hover); }
+.btn-outline { background: var(--white); color: var(--primary); border-color: var(--primary); }
+
+.badge { font-size: var(--fs-tiny); font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+.badge-success { color: var(--success); background: var(--success-bg); }
+.badge-warning { color: var(--warning); background: var(--warning-bg); }
+.badge-danger  { color: var(--danger);  background: var(--danger-bg); }
+.badge-info    { color: var(--info);    background: var(--info-bg); }

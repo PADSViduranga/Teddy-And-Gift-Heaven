@@ -1,5 +1,12 @@
+
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate
+} from "react-router-dom";
+
 import client from "./shared/api/client";
 import PricingPage from "./modules/pricing/pages/PricingPage";
 
@@ -13,25 +20,44 @@ function Landing() {
   }, []);
 
   return (
-    <main style={{ padding: "48px", maxWidth: 720, margin: "0 auto" }}>
-      <h1>Teddy and Gift Heaven</h1>
-      <p>Teddies and gifts, personalized and delivered.</p>
-      <Link to="/login"><button className="btn-primary">Log in / Register</button></Link>
-      <p style={{ color: "var(--text-muted)", marginTop: 32 }}>Backend status: {status}</p>
+    <main style={{ padding: 48 }}>
+      <p className="eyebrow">Setup check</p>
+
+      <h1>
+        <span className="logo">Teddy &amp; Gift Heaven</span>
+      </h1>
+
+      <p className="text-muted">Fonts and colors are loaded.</p>
+
+      <p>Backend status: {status}</p>
+
+      <button className="btn btn-primary">Primary button</button>{" "}
+
+      <span className="badge badge-success">In stock</span>
     </main>
   );
 }
 
 function Login() {
-  return <main style={{ padding: "48px" }}><h1>Log in / Register</h1></main>;
+  return (
+    <main style={{ padding: "48px" }}>
+      <h1>Log in / Register</h1>
+    </main>
+  );
 }
 
 function NotFound() {
-  return <main style={{ padding: "48px" }}><h1>Page not found</h1></main>;
+  return (
+    <main style={{ padding: "48px" }}>
+      <h1>Page not found</h1>
+    </main>
+  );
 }
 
 function Protected({ children }) {
-  return localStorage.getItem("token") ? children : <Navigate to="/login" replace />;
+  return localStorage.getItem("token")
+    ? children
+    : <Navigate to="/login" replace />;
 }
 
 export default function App() {
@@ -39,11 +65,18 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
+
         <Route path="/login" element={<Login />} />
+
         <Route
           path="/owner/pricing"
-          element={<Protected><PricingPage /></Protected>}
+          element={
+            <Protected>
+              <PricingPage />
+            </Protected>
+          }
         />
+
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

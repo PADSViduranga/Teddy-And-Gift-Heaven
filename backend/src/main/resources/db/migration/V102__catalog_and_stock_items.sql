@@ -1,4 +1,6 @@
--- V102: categories, stock items (supertype), products and packaging (subtypes), personalization options
+-- V102: categories, stock_items (supertype), products and packaging_items (subtypes),
+--       product_packaging (M:N), personalization_options
+-- Concepts: EER specialization, composite primary key, CHECK, DEFAULT, UNIQUE, indexes
 
 CREATE TABLE categories (
   category_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -6,7 +8,7 @@ CREATE TABLE categories (
   CONSTRAINT uq_categories_name UNIQUE (name)
 ) ENGINE=InnoDB;
 
--- supertype: everything that has stock (products and packaging materials)
+-- supertype: everything that has stock
 CREATE TABLE stock_items (
   item_id       BIGINT AUTO_INCREMENT PRIMARY KEY,
   name          VARCHAR(120) NOT NULL,
@@ -26,6 +28,7 @@ CREATE TABLE products (
   category_id INT           NOT NULL,
   price       DECIMAL(10,2) NOT NULL,
   description TEXT          NULL,
+  image_url   VARCHAR(255)  NULL,
   is_active   BOOLEAN       NOT NULL DEFAULT TRUE,
   CONSTRAINT ck_products_price CHECK (price >= 0),
   CONSTRAINT fk_products_item     FOREIGN KEY (item_id)     REFERENCES stock_items(item_id),
@@ -39,7 +42,7 @@ CREATE TABLE packaging_items (
   CONSTRAINT fk_packaging_item FOREIGN KEY (item_id) REFERENCES stock_items(item_id)
 ) ENGINE=InnoDB;
 
--- how much packaging one product needs when packed
+-- M:N: how much packaging one product needs when packed
 CREATE TABLE product_packaging (
   product_id   BIGINT NOT NULL,
   packaging_id BIGINT NOT NULL,
@@ -65,9 +68,11 @@ CREATE TABLE personalization_options (
 CREATE INDEX idx_products_category ON products(category_id);
 CREATE INDEX idx_stock_items_kind  ON stock_items(item_kind);
 
--- starter reference data
-INSERT INTO categories (name) VALUES ('Teddy bears'), ('Gift sets'), ('Flowers'), ('Cards and accessories');
+-- starter reference data (confirm the real values with the owner)
+INSERT INTO categories (name) VALUES
+  ('Teddy Bears'), ('Gift Boxes'), ('Flower Gifts'), ('Chocolates'), ('Personalized Gifts');
+
 INSERT INTO personalization_options (name, extra_cost, extra_minutes) VALUES
-  ('Name embroidery', 500.00, 20),
-  ('Message card',    150.00, 5),
-  ('Special wrapping',300.00, 10);
+  ('Name embroidery',  500.00, 20),
+  ('Message card',     150.00,  5),
+  ('Special wrapping', 300.00, 10);

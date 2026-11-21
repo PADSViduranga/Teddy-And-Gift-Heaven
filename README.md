@@ -1,72 +1,22 @@
 # Teddy and Gift Heaven
 
-CS304.3 Advanced Database Management Systems - Final Project
+CS304.3 Advanced Database Management Systems – Final Project (NSBM Green University)
 
-Online order, stock and delivery management system.
+Online gift shop with order, stock, packing, delivery and supplier management.
 
 ## Stack
-- Backend: Java, Spring Boot, Maven
+- Backend: Spring Boot (Java 17), Maven, Spring Security + JWT, Flyway
 - Frontend: React (Vite)
 - Database: MySQL 8
 
-## Branches
-- `main`: final output only (launch)
-- `develop`: integration and testing
-- `feature/<module>`: one branch per member, merged into `develop` by pull request
+## Structure
+- `backend/` – Spring Boot API, one package per module; migrations in `src/main/resources/db/migration`
+- `frontend/` – React app, one folder per module under `src/modules/`
+- `database/` – backup scripts and demo queries
+- `docs/` – team contract, data dictionary, SQL coverage, reports
 
-## How to run (first time)
-
-### 1. Tools
-Java 17, Node.js 18+, MySQL 8, Git.
-
-### 2. Database (run once on your own computer)
-Open MySQL as root (`sudo mysql` or `mysql -u root -p`) and run:
-
-```sql
-CREATE DATABASE teddy_gift_heaven CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-CREATE USER 'tgh_migrate'@'localhost' IDENTIFIED BY 'choose-a-password';
-GRANT ALL PRIVILEGES ON teddy_gift_heaven.* TO 'tgh_migrate'@'localhost';
-
-CREATE USER 'tgh_app'@'localhost' IDENTIFIED BY 'choose-another-password';
-GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE ON teddy_gift_heaven.* TO 'tgh_app'@'localhost';
-
-FLUSH PRIVILEGES;
-```
-
-### 3. Backend
-Create `backend/src/main/resources/application-local.properties` (it is ignored by Git, never commit it):
-
-```properties
-spring.datasource.password=<password of tgh_app>
-spring.flyway.password=<password of tgh_migrate>
-```
-
-Then run:
-
-```bash
-cd backend
-./mvnw spring-boot:run -Dspring-boot.run.profiles=local
-```
-
-Check `http://localhost:8080/api/health` shows `{"status":"ok"}`.
-
-### 4. Frontend
-```bash
-cd frontend
-cp .env.example .env
-npm install
-npm run dev
-```
-
-Open the address Vite prints. The landing page should show "Backend status: ok".
-
-### 5. Your branch
-```bash
-git checkout feature/<your-module>
-git pull origin develop
-```
-Work only on your own branch and open pull requests into `develop`.
-
-### Database scripts
-Every table, trigger, procedure and view is a Flyway migration in `backend/src/main/resources/db/migration`. Each member uses their own version range (Member 1 `V1xx`, Member 2 `V2xx`, and so on up to `V10xx`). Never edit a migration after it is merged. Fix mistakes with a new version.
+## Branching rules
+- `main` – launch only
+- `develop` – integration; all pull requests go here
+- `feature/<module>` – one branch per member
+- Never push directly to `main` or `develop`

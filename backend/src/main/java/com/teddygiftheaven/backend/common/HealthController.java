@@ -1,4 +1,4 @@
-package backend.common;
+package com.teddygiftheaven.backend.common;
 
 import java.util.Map;
 

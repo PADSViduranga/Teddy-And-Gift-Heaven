@@ -1,6 +1,7 @@
--- V103: delivery slots, orders, order items, personalization, discounts, payments
+-- V103: delivery_slots, orders, order_items, order_personalizations, discounts, order_discounts, payments
+-- Concepts: FOREIGN KEY chains, ENUM status workflow, CHECK (capacity, amounts, dates), composite PK, indexes
 
--- one row per delivery date, with a daily capacity for online orders
+-- one row per delivery date, with a daily capacity (peak-season limit)
 CREATE TABLE delivery_slots (
   slot_id      BIGINT AUTO_INCREMENT PRIMARY KEY,
   slot_date    DATE NOT NULL,
@@ -61,9 +62,11 @@ CREATE TABLE discounts (
   start_date  DATE NOT NULL,
   end_date    DATE NULL,
   CONSTRAINT ck_discounts_value CHECK (value > 0),
+  CONSTRAINT ck_discounts_percent CHECK (rule_type = 'FIXED' OR value <= 100),
   CONSTRAINT ck_discounts_dates CHECK (end_date IS NULL OR end_date >= start_date)
 ) ENGINE=InnoDB;
 
+-- M:N: which discounts applied to which order, and how much
 CREATE TABLE order_discounts (
   order_id    BIGINT        NOT NULL,
   discount_id INT           NOT NULL,
@@ -88,7 +91,7 @@ CREATE TABLE payments (
   CONSTRAINT fk_payments_user  FOREIGN KEY (confirmed_by) REFERENCES users(user_id)
 ) ENGINE=InnoDB;
 
--- indexes for the common searches (packing queue, customer history, reports)
+-- indexes for the packing queue, customer history and reports
 CREATE INDEX idx_orders_customer     ON orders(customer_id);
 CREATE INDEX idx_orders_status_slot  ON orders(status, slot_id);
 CREATE INDEX idx_orders_created      ON orders(created_at);
