@@ -1,0 +1,13 @@
+.ad { min-height: 70vh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; }
+.ad-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 40px 36px; max-width: 460px; text-align: center;
+}
+.ad-icon {
+  width: 84px; height: 84px; margin: 0 auto 18px; border-radius: 50%;
+  background: var(--accent-light); color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.ad-card h1 { font-size: var(--fs-h2); }
+.ad-card .text-muted { margin: 0 0 24px; }
+.ad-btn { display: inline-block; text-decoration: none; }

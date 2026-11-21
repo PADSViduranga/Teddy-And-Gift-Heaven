@@ -1,83 +1,57 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPage from "./modules/storefront/pages/LandingPage";
+import RequireLogin from "./shared/layout/RequireLogin";
+import { RequireStaff, RoleGate } from "./shared/layout/guards";
+import StaffLayout from "./shared/layout/StaffLayout";
+import Placeholder from "./shared/layout/Placeholder";
+import AccessDenied from "./shared/layout/AccessDenied";
+import { STAFF_PAGES } from "./shared/layout/menus";
+import "./shared/components/staff.css";
 
-import { useEffect, useState } from "react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate
-} from "react-router-dom";
+// Each member lists their finished pages in src/modules/<module>/routes.jsx:
+//   export default [{ path: "/staff/products", element: <ProductListPage /> }];
+// The path must match menus.js (staff pages) or CUSTOMER_PAGES / LOGIN_PAGES below.
+const moduleFiles = import.meta.glob("./modules/*/routes.jsx", { eager: true });
+const REAL = {};
+Object.values(moduleFiles).forEach((m) => (m.default || []).forEach((r) => { REAL[r.path] = r.element; }));
 
-import client from "./shared/api/client";
-import PricingPage from "./modules/pricing/pages/PricingPage";
+// public login pages (Member 2): 03 customer, 04 staff, 69 admin
+const LOGIN_PAGES = ["/login", "/staff/login", "/admin/login"];
 
-function Landing() {
-  const [status, setStatus] = useState("checking...");
+// customer pages: need a customer login
+const CUSTOMER_PAGES = [
+  "/shop", "/product/:id", "/cart", "/checkout", "/order-confirmation/:id",   // Members 4, 5
+  "/upload-slip/:id",                                                         // Member 6
+  "/my-orders", "/my-orders/:id", "/track/:id",                               // Member 7
+  "/account", "/recipients", "/wishlist", "/notifications",                   // Member 2 (+ open questions)
+];
 
-  useEffect(() => {
-    client.get("/health")
-      .then((res) => setStatus(res.data.status))
-      .catch(() => setStatus("backend not reachable"));
-  }, []);
-
-  return (
-    <main style={{ padding: 48 }}>
-      <p className="eyebrow">Setup check</p>
-
-      <h1>
-        <span className="logo">Teddy &amp; Gift Heaven</span>
-      </h1>
-
-      <p className="text-muted">Fonts and colors are loaded.</p>
-
-      <p>Backend status: {status}</p>
-
-      <button className="btn btn-primary">Primary button</button>{" "}
-
-      <span className="badge badge-success">In stock</span>
-    </main>
-  );
-}
-
-function Login() {
-  return (
-    <main style={{ padding: "48px" }}>
-      <h1>Log in / Register</h1>
-    </main>
-  );
-}
-
-function NotFound() {
-  return (
-    <main style={{ padding: "48px" }}>
-      <h1>Page not found</h1>
-    </main>
-  );
-}
-
-function Protected({ children }) {
-  return localStorage.getItem("token")
-    ? children
-    : <Navigate to="/login" replace />;
+function NotBuiltYet({ title }) {
+  return <main style={{ padding: 48 }}><h1>{title}</h1><p className="text-muted">This page hasn't been built yet.</p></main>;
 }
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={<LandingPage />} />
 
-        <Route path="/login" element={<Login />} />
+        {LOGIN_PAGES.map((p) => (
+          <Route key={p} path={p} element={REAL[p] || <NotBuiltYet title="Log in" />} />
+        ))}
 
-        <Route
-          path="/owner/pricing"
-          element={
-            <Protected>
-              <PricingPage />
-            </Protected>
-          }
-        />
+        {CUSTOMER_PAGES.map((p) => (
+          <Route key={p} path={p} element={<RequireLogin>{REAL[p] || <NotBuiltYet title={p} />}</RequireLogin>} />
+        ))}
 
-        <Route path="*" element={<NotFound />} />
+        <Route element={<RequireStaff><StaffLayout /></RequireStaff>}>
+          {STAFF_PAGES.map((p) => (
+            <Route key={p.path} path={p.path}
+              element={<RoleGate path={p.path}>{REAL[p.path] || <Placeholder />}</RoleGate>} />
+          ))}
+        </Route>
+
+        <Route path="*" element={<AccessDenied variant="notfound" />} />
       </Routes>
     </BrowserRouter>
   );
