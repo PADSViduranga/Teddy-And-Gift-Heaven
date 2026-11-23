@@ -1,0 +1,6 @@
+[Unit]
+Description=Teddy and Gift Heaven nightly database backup
+
+[Service]
+Type=oneshot
+ExecStart=%h/Documents/nsbm/ADBMS/teddy-and-gift-heaven/database/backup/backup.sh SCHEDULED
