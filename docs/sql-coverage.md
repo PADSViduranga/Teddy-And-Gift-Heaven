@@ -17,7 +17,7 @@ When you finish something, update your row with the file name and change the sta
 | LEFT JOIN | Products never sold (slow stock), customers with no orders | 4, 10 | | To do |
 | RIGHT JOIN | Every category with its product count, including empty ones | 4 | | To do |
 | FULL JOIN (LEFT JOIN UNION RIGHT JOIN) | Items sold vs items received this month | 10 | | To do |
-| UNION / UNION ALL | Combined activity feed for the audit page | 3 | | To do |
+| UNION / UNION ALL | Combined activity feed (audit changes and backups) | 3 | V303 `v_activity_feed` | Done |
 | Subqueries | Items below reorder level, latest supplier price | 4, 9 | | To do |
 | GROUP BY, HAVING, aggregates | Monthly sales, drivers with high failure rates | 8, 10 | | To do |
 | Date functions | On-time delivery (DATEDIFF), sales by month (DATE_FORMAT) | 8, 10 | | To do |
@@ -30,6 +30,11 @@ When you finish something, update your row with the file name and change the sta
 | Row locking (FOR UPDATE) | Stopping two customers from buying the last item | 4, 5 | | To do |
 | Scheduled events | Expiring unpaid reservations | 4 | | To do |
 | Security (users, GRANT, restricted views) | tagh_app least privilege, read-only reporting user | 2 | | To do |
-| Backup and recovery | mysqldump, binary logs, tested restore | 3 | | To do |
-| Backup copy (CREATE TABLE ... AS SELECT) | Yearly order snapshot | 3 | | To do |
+| Backup and recovery | mysqldump, binary logs, tested restore, point-in-time recovery | 3 | database/backup/ (README.md) | Done |
+| Backup copy (CREATE TABLE ... AS SELECT) | Audit log snapshot | 3 | database/queries/member3-audit.sql | Done |
 | Query optimization (EXPLAIN) | Before/after timings on 50,000 orders | 10 | docs/performance.md | To do |
+| Triggers (auditing) | Price, order, payment, stock and user changes written to audit_log | 3 | V301 | Done |
+| Triggers with SIGNAL | audit_log is append-only: updates and deletes are refused | 3 | V301 | Done |
+| Views with LEFT JOIN | Audit log with user names, including system changes with no user | 3 | V303 `v_audit_log` | Done |
+| JSON functions | JSON_OBJECT in the audit triggers, JSON_EXTRACT for old and new prices | 3 | V301, member3-audit.sql | Done |
+| Least-privilege user | tagh_backup can read everything but only write backup_history | 3 | database/backup/README.md | Done |

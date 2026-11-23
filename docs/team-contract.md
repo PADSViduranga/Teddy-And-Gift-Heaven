@@ -6,7 +6,7 @@ should change, tell me (Member 1) and we'll update it through a pull request so 
 
 ## Getting set up
 
-Everyone runs the project on their own machine. You'll need MySQL 8, Java 17 and Node 18 or newer.
+Everyone runs the project on their own machine. The full step-by-step version is in `docs/setup-guide.md`. You'll need MySQL 8, Java 17 and Node 18 or newer.
 
 Create a database called `teddy_and_gift_heaven` and two MySQL users:
 `tagh_migrate`, which Flyway uses to build the tables, and `tagh_app`, which the running app uses.
@@ -43,7 +43,7 @@ Stay inside your own folders. That's what keeps us from overwriting each other's
 |---|---|---|---|---|
 | 1 | feature/database-schema | common, config | shared, storefront (landing) | V1xx |
 | 2 | feature/security-access | security | modules/auth | V2xx |
-| 3 | feature/backup-devops | audit | modules/reports (audit pages) | V3xx |
+| 3 | feature/backup-devops | audit | modules/audit | V3xx |
 | 4 | feature/inventory | inventory | modules/inventory, storefront (shop) | V4xx |
 | 5 | feature/orders | orders | modules/orders | V5xx |
 | 6 | feature/personalization-pricing | pricing | modules/pricing | V6xx |
