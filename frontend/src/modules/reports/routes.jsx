@@ -4,6 +4,7 @@ import InventoryDashboard from "./pages/InventoryDashboard";
 import PackerDashboard from "./pages/PackerDashboard";
 import DriverDashboard from "./pages/DriverDashboard";
 import SalesReport from "./pages/SalesReport";
+import BestSellersReport from "./pages/BestSellersReport";
 
 // Member 10's pages. Paths must match shared/layout/menus.js.
 export default [
@@ -13,4 +14,5 @@ export default [
   { path: "/staff/packer", element: <PackerDashboard /> },
   { path: "/staff/driver", element: <DriverDashboard /> },
   { path: "/staff/reports/sales", element: <SalesReport /> },
+  { path: "/staff/reports/best-sellers", element: <BestSellersReport /> },
 ];
