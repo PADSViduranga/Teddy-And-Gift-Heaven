@@ -13,7 +13,7 @@ export const monthLabel = (ym) => {
 // short axis numbers: 12,000 -> 12K, 1,500,000 -> 1.5M
 export const compact = (v) => {
   const n = Number(v);
-  if (Math.abs(n) >= 1e6) return `${+(n / 1e6).toFixed(1)}M`;
+  if (Math.abs(n) >= 1e6) return `${+(n / 1e6).toFixed(2)}M`;
   if (Math.abs(n) >= 1e4) return `${+(n / 1e3).toFixed(0)}K`;
   return n.toLocaleString("en-LK");
 };

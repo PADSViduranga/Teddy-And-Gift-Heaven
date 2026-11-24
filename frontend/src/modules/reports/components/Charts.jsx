@@ -7,13 +7,20 @@ import "./charts.css";
 
 const W = 720, PAD = { t: 16, r: 56, b: 28, l: 48 };
 
-function niceMax(v) {
-  if (v <= 0) return 1;
-  const p = Math.pow(10, Math.floor(Math.log10(v)));
-  return [1, 2, 2.5, 5, 10].map((m) => m * p).find((m) => m >= v);
+// round steps for the y-axis: tries 4, 5 or 6 steps and keeps the one with the least empty space
+function niceScale(v) {
+  if (!(v > 0)) return { max: 1, ticks: 4 };
+  let best = null;
+  [4, 5, 6].forEach((ticks) => {
+    const raw = v / ticks;
+    const p = Math.pow(10, Math.floor(Math.log10(raw)));
+    const step = [1, 2, 2.5, 5, 10].map((m) => m * p).find((m) => m >= raw);
+    if (!best || step * ticks < best.max) best = { max: step * ticks, ticks };
+  });
+  return best;
 }
 
-function Axis({ max, h, ticks = 4 }) {
+function Axis({ max, h, ticks }) {
   const ys = Array.from({ length: ticks + 1 }, (_, i) => (max / ticks) * i);
   return (
     <>
@@ -43,7 +50,7 @@ function columnPath(x, y, w, h) {
 export function LineChart({ points, format = compact, height = 240, name = "Value" }) {
   const [hover, setHover] = useState(null);
   if (!points?.length) return <p className="text-muted">No data for this period.</p>;
-  const max = niceMax(Math.max(...points.map((p) => Number(p.y) || 0)));
+  const { max, ticks } = niceScale(Math.max(...points.map((p) => Number(p.y) || 0)));
   const iw = W - PAD.l - PAD.r, ih = height - PAD.t - PAD.b;
   const x = (i) => PAD.l + (points.length === 1 ? iw / 2 : (iw * i) / (points.length - 1));
   const y = (v) => PAD.t + ih * (1 - (Number(v) || 0) / max);
@@ -55,7 +62,7 @@ export function LineChart({ points, format = compact, height = 240, name = "Valu
   return (
     <div className="rp-chart" onMouseLeave={() => setHover(null)}>
       <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={name}>
-        <Axis max={max} h={height} />
+        <Axis max={max} h={height} ticks={ticks} />
         <g className="rp-axis">
           {points.map((p, i) => (i % step === 0 || i === points.length - 1) && (
             <text key={i} x={x(i)} y={height - 8} textAnchor="middle">{p.label}</text>
@@ -89,7 +96,7 @@ export function LineChart({ points, format = compact, height = 240, name = "Valu
 export function ColumnChart({ labels, series, format = compact, height = 260 }) {
   const [hover, setHover] = useState(null);
   if (!labels?.length || !series?.length) return <p className="text-muted">No data.</p>;
-  const max = niceMax(Math.max(...series.flatMap((s) => s.values.map((v) => Number(v) || 0))));
+  const { max, ticks } = niceScale(Math.max(...series.flatMap((s) => s.values.map((v) => Number(v) || 0))));
   const iw = W - PAD.l - PAD.r, ih = height - PAD.t - PAD.b;
   const band = iw / labels.length;
   const barW = Math.min(24, (band * 0.7 - 2 * (series.length - 1)) / series.length);
@@ -103,7 +110,7 @@ export function ColumnChart({ labels, series, format = compact, height = 260 }) 
         </div>
       )}
       <svg viewBox={`0 0 ${W} ${height}`} role="img" aria-label={series.map((s) => s.name).join(", ")}>
-        <Axis max={max} h={height} />
+        <Axis max={max} h={height} ticks={ticks} />
         <g className="rp-axis">
           {labels.map((l, i) => <text key={l} x={PAD.l + band * i + band / 2} y={height - 8} textAnchor="middle">{l}</text>)}
         </g>
