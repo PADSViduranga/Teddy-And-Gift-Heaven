@@ -2,6 +2,7 @@ import OwnerDashboard from "./pages/OwnerDashboard";
 import OrderStaffDashboard from "./pages/OrderStaffDashboard";
 import InventoryDashboard from "./pages/InventoryDashboard";
 import PackerDashboard from "./pages/PackerDashboard";
+import DriverDashboard from "./pages/DriverDashboard";
 
 // Member 10's pages. Paths must match shared/layout/menus.js.
 export default [
@@ -9,4 +10,5 @@ export default [
   { path: "/staff/order-staff", element: <OrderStaffDashboard /> },
   { path: "/staff/inventory", element: <InventoryDashboard /> },
   { path: "/staff/packer", element: <PackerDashboard /> },
+  { path: "/staff/driver", element: <DriverDashboard /> },
 ];
