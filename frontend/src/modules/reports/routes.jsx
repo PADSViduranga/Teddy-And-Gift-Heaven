@@ -7,6 +7,7 @@ import SalesReport from "./pages/SalesReport";
 import BestSellersReport from "./pages/BestSellersReport";
 import SeasonalReport from "./pages/SeasonalReport";
 import CustomerReport from "./pages/CustomerReport";
+import StockLossReport from "./pages/StockLossReport";
 
 // Member 10's pages. Paths must match shared/layout/menus.js.
 export default [
@@ -19,4 +20,5 @@ export default [
   { path: "/staff/reports/best-sellers", element: <BestSellersReport /> },
   { path: "/staff/reports/seasonal", element: <SeasonalReport /> },
   { path: "/staff/reports/customers", element: <CustomerReport /> },
+  { path: "/staff/reports/stock-loss", element: <StockLossReport /> },
 ];
