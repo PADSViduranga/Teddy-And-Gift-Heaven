@@ -1,0 +1,50 @@
+/* Member 4 – shared styles for the inventory pages. Colours come from index.css variables only. */
+.inv-notice { border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: var(--fs-small); font-weight: 600; }
+.inv-notice-error { background: var(--danger-bg); color: var(--danger); }
+.inv-notice-success { background: var(--success-bg); color: var(--success); }
+
+.inv-empty { text-align: center; color: var(--text-muted); padding: 28px 14px; }
+.inv-small { min-width: 140px; }
+.inv-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.inv-link {
+  background: none; border: none; padding: 0; color: var(--primary); cursor: pointer; text-decoration: none;
+  font-family: var(--font-heading); font-weight: 600; font-size: var(--fs-small);
+}
+.inv-link-danger { color: var(--danger); }
+.inv-actions { display: flex; gap: 14px; justify-content: flex-end; white-space: nowrap; }
+.inv-name { font-weight: 700; display: block; }
+.inv-sub { color: var(--text-muted); font-size: var(--fs-tiny); }
+.inv-thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; background: var(--blush); display: block; }
+.inv-in { color: var(--success); font-weight: 700; }
+.inv-out { color: var(--danger); font-weight: 700; }
+.inv-nowrap { white-space: nowrap; }
+
+/* two columns: form card on the left, list on the right */
+.inv-split { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 20px; align-items: start; }
+.inv-split .card h3 { margin-bottom: 14px; }
+.inv-stack { display: grid; gap: 14px; }
+.inv-hint { color: var(--text-muted); font-size: var(--fs-tiny); margin-top: 4px; }
+.inv-preview {
+  background: var(--blush); border-radius: 8px; padding: 10px 14px; font-size: var(--fs-small);
+  display: flex; justify-content: space-between;
+}
+.inv-full { grid-column: 1 / -1; }
+.inv-textarea { min-height: 90px; resize: vertical; font: inherit; }
+.inv-check { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+
+.inv-pager { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 12px; }
+.inv-page {
+  width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface);
+  color: var(--primary); cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+}
+.inv-page:disabled { opacity: 0.4; cursor: default; }
+
+/* low-stock cards (page 23) */
+.inv-bar { height: 8px; border-radius: 999px; background: var(--blush); overflow: hidden; min-width: 120px; }
+.inv-bar span { display: block; height: 100%; background: var(--warning); }
+.inv-bar span.inv-bar-empty { background: var(--danger); }
+
+@media (max-width: 1000px) {
+  .inv-split { grid-template-columns: 1fr; }
+}
