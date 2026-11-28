@@ -5,7 +5,7 @@ CS304.3 Advanced Database Management Systems – Final Project (NSBM Green Unive
 Online gift shop with order, stock, packing, delivery and supplier management.
 
 ## Stack
-- Backend: Spring Boot (Java 17), Maven, Spring Security + JWT, Flyway
+- Backend: Spring Boot (Java 25), Maven, Spring Security + JWT, Flyway
 - Frontend: React (Vite)
 - Database: MySQL 8
 
