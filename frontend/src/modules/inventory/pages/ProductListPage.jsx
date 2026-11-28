@@ -4,7 +4,7 @@ import { AlertTriangle, Boxes, PackageX, Plus, Wallet } from "lucide-react";
 import PageHeader from "../../../shared/components/PageHeader";
 import StatCard from "../../../shared/components/StatCard";
 import Notice from "../components/Notice";
-import { canManage, money, moneyShort, num, stockBadge, useData } from "../components/helpers";
+import { money, moneyShort, num, stockBadge, useCanManage, useData } from "../components/helpers";
 import { getCategories, getProducts, getSummary } from "../api/inventoryApi";
 import "../components/inventory.css";
 
@@ -15,9 +15,9 @@ export default function ProductListPage() {
   const [search, setSearch] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [filter, setFilter] = useState("");
-  const manage = canManage();
+  const manage = useCanManage();
 
-  const summary = useData(getSummary, []);
+  const summary = useData(() => manage ? getSummary() : Promise.resolve(null), [manage]);
   const categories = useData(getCategories, []);
   const products = useData(
     () => getProducts({ search: search || undefined, categoryId: categoryId || undefined, filter: filter || undefined }),
@@ -34,12 +34,12 @@ export default function ProductListPage() {
         )}
       </PageHeader>
 
-      <div className="stats">
+      {manage && <div className="stats">
         <StatCard label="Products" value={num(s.products)} hint={`${num(s.active_products)} on sale`} icon={Boxes} />
         <StatCard label="Low stock" value={num(s.low_items)} hint="at or below reorder level" icon={AlertTriangle} />
         <StatCard label="Out of stock" value={num(s.out_of_stock)} hint="nothing left to sell" icon={PackageX} />
         <StatCard label="Stock value" value={moneyShort(s.stock_value)} hint="on hand × price" icon={Wallet} />
-      </div>
+      </div>}
 
       <div className="filters">
         <input className="input" type="search" placeholder="Search products…" value={search}

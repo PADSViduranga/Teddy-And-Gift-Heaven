@@ -16,7 +16,7 @@ const REAL = {};
 Object.values(moduleFiles).forEach((m) => (m.default || []).forEach((r) => { REAL[r.path] = r.element; }));
 
 // public login pages (Member 2): 03 customer, 04 staff, 69 admin
-const LOGIN_PAGES = ["/login", "/staff/login", "/admin/login"];
+const LOGIN_PAGES = ["/login", "/register", "/staff/login", "/admin/login"];
 
 // customer pages: need a customer login
 const CUSTOMER_PAGES = [

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "../../../shared/components/PageHeader";
 import Notice from "../components/Notice";
-import { canManage, errorText, num, stockBadge, useData } from "../components/helpers";
+import { errorText, num, stockBadge, useCanManage, useData } from "../components/helpers";
 import { addPackaging, getPackaging, updatePackaging } from "../api/inventoryApi";
 import "../components/inventory.css";
 
@@ -13,7 +13,7 @@ import "../components/inventory.css";
 const EMPTY = { name: "", unit: "piece", reorderLevel: "10", openingQty: "0" };
 
 export default function PackagingPage() {
-  const manage = canManage();
+  const manage = useCanManage();
   const { data, error, loading, reload } = useData(getPackaging, []);
   const [form, setForm] = useState(EMPTY);
   const [editId, setEditId] = useState(null);
