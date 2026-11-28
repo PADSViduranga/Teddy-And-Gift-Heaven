@@ -7,7 +7,7 @@ It takes about 30 minutes. If a step fails, post the exact error in the group ch
 
 | Tool | Version | Check with |
 |---|---|---|
-| Java (JDK) | 17 or newer | `java -version` |
+| Java (JDK) | 25 or newer | `java -version` |
 | Node.js | 18 or newer | `node -v` |
 | MySQL server and client | 8.4 | `mysql --version` |
 | Git | any recent | `git --version` |
@@ -34,7 +34,7 @@ Run `mysql -u root -p`, then:
     GRANT ALL PRIVILEGES ON teddy_and_gift_heaven.* TO 'tagh_migrate'@'localhost';
 
     CREATE USER 'tagh_app'@'localhost' IDENTIFIED BY '<pick another password>';
-    GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE ON teddy_and_gift_heaven.* TO 'tagh_app'@'localhost';
+    GRANT SELECT ON teddy_and_gift_heaven.* TO 'tagh_app'@'localhost';
 
     SET PERSIST log_bin_trust_function_creators = 1;
     SET PERSIST event_scheduler = ON;
@@ -52,7 +52,7 @@ Create `backend/src/main/resources/application-local.properties` (it's in `.giti
 
     spring.datasource.password=<tagh_app password>
     spring.flyway.password=<tagh_migrate password>
-    app.jwt.secret=<any random text, at least 32 characters>
+    app.jwt.secret=<a securely generated secret of at least 32 bytes>
 
 Create `frontend/.env` with this line:
 
@@ -71,6 +71,15 @@ The first start downloads libraries and takes a few minutes. Flyway then builds 
 trigger and procedure. Wait for `Started BackendApplication`, then open
 http://localhost:8080/api/health, which should show `{"status":"ok"}`.
 
+After Flyway finishes, run the following as a MySQL administrator from the repository root.
+This replaces the initial schema-wide read grant with the runtime permissions and creates the
+read-only packing database account. Save its generated password securely.
+
+    mysql -u root -p
+    SOURCE database/security/runtime-grants.sql;
+    SHOW GRANTS FOR 'tagh_app'@'localhost';
+    SHOW GRANTS FOR 'tagh_packer'@'localhost' USING 'tagh_packing_read';
+
 Frontend, in a second terminal:
 
     cd frontend
@@ -78,6 +87,28 @@ Frontend, in a second terminal:
     npm run dev
 
 Open http://localhost:5173 and you should see the landing page.
+
+Use `/register` to create a customer account and `/login` to sign in. Existing staff need a
+valid BCrypt password hash and their assigned database role to use `/staff/login`.
+`/admin/login` accepts owners. Development rows generated with placeholder hashes need an
+administrator-provisioned password before they can sign in.
+
+### Data access
+
+| Role | Access in the implemented app |
+|---|---|
+| Customer | Storefront selling prices, own account |
+| Owner | Pricing, reports, audit, backups, inventory |
+| Order staff | Product selling prices for order handling, payment queue totals, stock losses |
+| Inventory manager | Inventory, supplier prices on low-stock alerts, stock valuation and losses |
+| Packer | Packing queue, packaging quantities, stock loss entry and history |
+| Driver | Own assigned deliveries and performance, with recipient name and city on the dashboard |
+
+The current report schema calculates revenue and inventory valuation. It has no profit column.
+Packing views omit monetary fields, payment records and recipient details. The direct MySQL packing
+account can read those views only. In the web app, Spring Security enforces the account role against
+the shared runtime connection. The runtime SQL grants exclude recipient street addresses and
+database DDL. Keep the Flyway account separate from the application account.
 
 ## 6. Editor tips
 

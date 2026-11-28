@@ -6,7 +6,7 @@ should change, tell me (Member 1) and we'll update it through a pull request so 
 
 ## Getting set up
 
-Everyone runs the project on their own machine. The full step-by-step version is in `docs/setup-guide.md`. You'll need MySQL 8, Java 17 and Node 18 or newer.
+Everyone runs the project on their own machine. The full step-by-step version is in `docs/setup-guide.md`. You'll need MySQL 8, Java 25 and Node 18 or newer.
 
 Create a database called `teddy_and_gift_heaven` and two MySQL users:
 `tagh_migrate`, which Flyway uses to build the tables, and `tagh_app`, which the running app uses.
