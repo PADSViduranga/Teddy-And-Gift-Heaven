@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getSession } from "../../../shared/utils/session";
+import { useStaffAccount } from "../../../shared/layout/staffContext";
 
 // Small shared helpers for Member 4's pages.
 
@@ -16,9 +16,10 @@ export const moneyShort = (v) => {
 export const when = (v) =>
   v ? new Date(v).toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "–";
 
-// the role of whoever is logged in, e.g. "OWNER" or "INVENTORY_MANAGER"
-export const myRole = () => getSession()?.role;
-export const canManage = () => ["OWNER", "INVENTORY_MANAGER"].includes(myRole());
+export function useCanManage() {
+  const { role } = useStaffAccount();
+  return ["OWNER", "INVENTORY_MANAGER"].includes(role);
+}
 
 // Turns an error from the backend into a sentence for the user.
 // Our backend already sends a plain message (e.g. "Sorry, only 2 of Big Brown Teddy left").
