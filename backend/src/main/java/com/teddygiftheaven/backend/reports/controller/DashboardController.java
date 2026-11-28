@@ -1,15 +1,15 @@
 package com.teddygiftheaven.backend.reports.controller;
 
 import java.util.Map;
+import java.security.Principal;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teddygiftheaven.backend.reports.service.ReportService;
 
-// Dashboards, pages 58-62 (Member 10). Each role may only open its own dashboard: Member 2 adds the checks.
+// Each role may only open its own dashboard.
 @RestController
 @RequestMapping("/api/dashboard")
 public class DashboardController {
@@ -32,7 +32,8 @@ public class DashboardController {
     @GetMapping("/packer")
     public Map<String, Object> packer() { return service.packerDashboard(); }
 
-    // TEMPORARY: driverId as a parameter until the logged-in driver comes from Member 2's JWT
     @GetMapping("/driver")
-    public Map<String, Object> driver(@RequestParam long driverId) { return service.driverDashboard(driverId); }
+    public Map<String, Object> driver(Principal principal) {
+        return service.driverDashboard(Long.parseLong(principal.getName()));
+    }
 }
