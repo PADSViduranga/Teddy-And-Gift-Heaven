@@ -1,20 +1,14 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CheckCircle2, Clock, Truck, XCircle } from "lucide-react";
 import PageHeader from "../../../shared/components/PageHeader";
 import StatCard from "../../../shared/components/StatCard";
-import { getDashboard, getDrivers } from "../api/reportsApi";
+import { getDashboard } from "../api/reportsApi";
 import { num, pct } from "../components/format";
 import useLoad from "../components/useLoad";
 import "./reports.css";
 
-// Page 62 – Driver dashboard (Member 10).
-// The driver's id will come from the login (Member 2). Until then, a test picker is shown.
 export default function DriverDashboard() {
-  const [driverId, setDriverId] = useState(localStorage.getItem("userId") || "");
-  const drivers = useLoad(() => (localStorage.getItem("userId") ? Promise.resolve([]) : getDrivers()));
-  const { data: d, error, loading } = useLoad(
-    () => (driverId ? getDashboard("driver", { driverId }) : Promise.resolve(null)), [driverId]);
+  const { data: d, error, loading } = useLoad(() => getDashboard("driver"));
   const perf = d?.performance?.[0];
 
   return (
@@ -22,17 +16,8 @@ export default function DriverDashboard() {
       <PageHeader title="My deliveries" subtitle="Today's route and how you're doing.">
         <Link to="/staff/my-deliveries" className="btn btn-primary" style={{ textDecoration: "none" }}>Open my deliveries</Link>
       </PageHeader>
-      {!localStorage.getItem("userId") && (
-        <div className="filters">
-          <span className="text-muted">Testing until the real login exists: show the dashboard for</span>
-          <select className="select rp-select" value={driverId} onChange={(e) => setDriverId(e.target.value)}>
-            <option value="">Pick a driver</option>
-            {(drivers.data || []).map((x) => <option key={x.staff_id} value={x.staff_id}>{x.full_name}</option>)}
-          </select>
-        </div>
-      )}
       {error && <div className="rp-error">{error}</div>}
-      {loading && driverId && <p className="rp-loading">Loading…</p>}
+      {loading && <p className="rp-loading">Loading…</p>}
       {d && (
         <>
           <div className="stats">
