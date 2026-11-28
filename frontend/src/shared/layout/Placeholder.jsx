@@ -1,7 +1,7 @@
 import { Package, ShoppingBag, Truck } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import StatCard from "../components/StatCard";
-import { usePageInfo } from "./guards";
+import { usePageInfo } from "./staffContext";
 
 const OWNER_BY_PAGE = (no) =>
   no <= 2 ? 1 : no <= 11 || no === 69 ? 2 : no <= 13 ? 3 : no <= 25 ? 4 : no <= 32 ? 5 :
