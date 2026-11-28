@@ -18,17 +18,17 @@ When you finish something, update your row with the file name and change the sta
 | RIGHT JOIN | Every category with its sales, including empty ones | 4, 10 | V1003 `v_category_sales` | Done (Member 10) |
 | FULL JOIN (LEFT JOIN UNION RIGHT JOIN) | Items sold vs items received, last 30 days | 10 | V1003 `v_stock_in_out_30d` | Done |
 | UNION / UNION ALL | Combined activity feed (audit changes and backups) | 3 | V303 `v_activity_feed` | Done |
-| Subqueries | Items below reorder level, latest supplier price | 4, 9 | | To do |
+| Subqueries | Items below reorder level (IN), latest supplier price (correlated), above-average stock | 4, 9 | V401 `v_low_stock`, database/queries/member4-inventory.sql | Done (Member 4) |
 | GROUP BY, HAVING, aggregates | Monthly sales, seasons, payments, drivers | 8, 10 | V1003 views | Done (Member 10) |
 | Date functions | On-time delivery, sales by month, seasons (MONTH, DAY, DATEDIFF, DATE_FORMAT) | 8, 10 | V1003 views | Done (Member 10) |
 | Window functions | RANK (best sellers), SUM OVER (year to date), LAG (growth), NTILE (spending groups) | 10 | V1003 | Done |
 | Views | Packing queue without prices, driver's own deliveries, reports | 7, 8, 10 | | To do |
 | Stored procedures | Place order, confirm payment, assign driver, receive stock | 5, 6, 8, 9 | | To do |
 | Functions | Order total, priority score | 5, 6 | | To do |
-| Triggers | Stock from movements, low-stock alerts, price history, audit log | 3, 4, 6 | | To do |
+| Triggers | Stock from movements (`tr_stock_movements_apply`), low-stock alerts (`tr_stock_items_low_stock`), price history, audit log | 3, 4, 6 | V401 | Done (Member 4 part) |
 | Transactions (COMMIT / ROLLBACK) | Placing an order, receiving a purchase order | 5, 9 | | To do |
-| Row locking (FOR UPDATE) | Stopping two customers from buying the last item | 4, 5 | | To do |
-| Scheduled events | Expiring unpaid reservations | 4 | | To do |
+| Row locking (FOR UPDATE) | Stopping two customers from buying the last item | 4, 5 | V401 `sp_reserve_stock`, `tr_stock_movements_apply` | Done (Member 4 part) |
+| Scheduled events | Expiring unpaid reservations | 4 | V401 `ev_expire_reservations` | Done |
 | Security (users, GRANT, restricted views) | tagh_app least privilege, read-only reporting user | 2 | | To do |
 | Backup and recovery | mysqldump, binary logs, tested restore, point-in-time recovery | 3 | database/backup/ (README.md) | Done |
 | Backup copy (CREATE TABLE ... AS SELECT) | Audit log snapshot | 3 | database/queries/member3-audit.sql | Done |
@@ -43,3 +43,14 @@ When you finish something, update your row with the file name and change the sta
 | Composite and covering indexes | (status, created_at, total_amount) and (product_id, quantity, unit_price) | 10 | V1002, docs/performance.md | Done |
 | Removing a redundant index | idx_order_items_product replaced by the covering index | 10 | V1002 | Done |
 | Multi-table UPDATE with JOIN | Delivery date capacity filled from order counts | 10 | V1001 | Done |
+| Triggers with SIGNAL | Refuse overselling, a sale without a reservation, or removing reserved stock | 4 | V401 `tr_stock_movements_apply` | Done |
+| Stored procedures (Member 4) | Reserve, release and convert stock; adjust stock with owner approval; record damage, loss and returns | 4 | V401 | Done |
+| Transactions with ROLLBACK (EXIT HANDLER) | Adding a product saves the item, product and opening stock together or not at all | 4 | V401 `sp_add_product`, `sp_add_packaging_item` | Done |
+| Functions (Member 4) | Available stock, owner-approval limit | 4 | V401 `fn_available_stock`, `fn_adjustment_approval_limit` | Done |
+| Views (Member 4) | Stock levels, low stock, movement history with names (LEFT JOIN), reservations | 4 | V401 | Done |
+| LEFT / RIGHT JOIN (Member 4) | Products with no movements; every category with its units in stock | 4 | database/queries/member4-inventory.sql | Done |
+
+> **Note from Member 4:** since V401, every row inserted into `stock_movements` changes
+> `stock_items` (and is refused if the stock isn't there). To run Member 10's sample data
+> generator, switch that off for your session first:
+> `SET @skip_stock_sync = 1; CALL sp_generate_sample_data(50000); SET @skip_stock_sync = NULL;`
