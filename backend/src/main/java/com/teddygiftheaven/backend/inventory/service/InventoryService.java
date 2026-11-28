@@ -36,11 +36,10 @@ public class InventoryService {
         this.repo = repo;
     }
 
-    // the logged-in user's id, saved with every stock change (null if unknown)
+    // The JWT subject identifies the actor for stock changes.
     private Long currentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || auth.getName() == null) return null;
-        return repo.userIdByEmail(auth.getName());
+        return Long.valueOf(auth.getName());
     }
 
     // ---------- overview ----------

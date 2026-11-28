@@ -2,7 +2,7 @@
 ## How to run (first time)
 
 ### 1. Tools
-Java 17, Node.js 18+, MySQL 8, Git.
+Java 25, Node.js 18+, MySQL 8, Git.
 
 ### 2. Database (run once on your own computer)
 Open MySQL as root (`sudo mysql` or `mysql -u root -p`) and run:

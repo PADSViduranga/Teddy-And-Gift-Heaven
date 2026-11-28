@@ -32,19 +32,6 @@ public class InventoryRepository {
         this.jdbc = jdbc;
     }
 
-    // ---------- who is logged in ----------
-
-    // Until Member 2's JWT login is merged, the login name is looked up as an email.
-    // Returns null if there is no such user (the movement is then saved without a user).
-    public Long userIdByEmail(String email) {
-        try {
-            return jdbc.queryForObject("SELECT user_id FROM users WHERE email = :e",
-                    new MapSqlParameterSource("e", email), Long.class);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-    }
-
     // ---------- summary (stat cards on the inventory pages) ----------
 
     public Map<String, Object> summary() {
@@ -162,7 +149,7 @@ public class InventoryRepository {
 
     public List<Map<String, Object>> packaging() {
         return jdbc.getJdbcTemplate().queryForList(
-                "SELECT * FROM v_stock_levels WHERE item_kind = 'PACKAGING' ORDER BY is_low DESC, name");
+                "SELECT * FROM v_packing_supplies ORDER BY is_low DESC, name");
     }
 
     public long addPackaging(PackagingRequest r, Long userId) {

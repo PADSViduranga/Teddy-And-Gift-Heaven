@@ -130,25 +130,22 @@ public class ReportService {
 
     public Map<String, Object> packerDashboard() {
         Map<String, Object> d = new LinkedHashMap<>(jdbc.queryForMap("SELECT "
-                + "(SELECT COUNT(*) FROM orders WHERE status = 'CONFIRMED') AS to_pack, "
-                + "(SELECT COUNT(*) FROM orders WHERE status = 'PACKING') AS packing_now, "
-                + "(SELECT COUNT(*) FROM orders o JOIN delivery_slots s ON s.slot_id = o.slot_id "
-                + "   WHERE o.status IN ('CONFIRMED','PACKING') AND s.slot_date <= CURRENT_DATE + INTERVAL 1 DAY) AS due_by_tomorrow, "
-                + "(SELECT COUNT(*) FROM v_stock_loss WHERE item_kind = 'PACKAGING' AND is_low) AS packaging_low"));
+                + "(SELECT COUNT(*) FROM v_packing_queue WHERE status = 'CONFIRMED') AS to_pack, "
+                + "(SELECT COUNT(*) FROM v_packing_queue WHERE status = 'PACKING') AS packing_now, "
+                + "(SELECT COUNT(*) FROM v_packing_queue WHERE slot_date <= CURRENT_DATE + INTERVAL 1 DAY) AS due_by_tomorrow, "
+                + "(SELECT COUNT(*) FROM v_packing_supplies WHERE is_low) AS packaging_low"));
         d.put("next_to_pack", jdbc.queryForList("""
-                SELECT o.order_id, s.slot_date, o.priority_score,
-                       (SELECT COUNT(*) FROM order_items oi WHERE oi.order_id = o.order_id) AS items
-                FROM orders o JOIN delivery_slots s ON s.slot_id = o.slot_id
-                WHERE o.status IN ('CONFIRMED','PACKING')
-                ORDER BY s.slot_date, o.priority_score DESC LIMIT 8
+                SELECT order_id, slot_date, priority_score, items
+                FROM v_packing_queue
+                ORDER BY slot_date, priority_score DESC, order_id LIMIT 8
                 """));
         return d;
     }
 
-    // driverId comes from the login once Member 2's JWT is in; until then the page passes it
     public Map<String, Object> driverDashboard(long driverId) {
         Map<String, Object> d = new LinkedHashMap<>();
-        d.put("performance", jdbc.queryForList("SELECT * FROM v_driver_performance WHERE staff_id = ?", driverId));
+        d.put("performance", jdbc.queryForList(
+                "SELECT delivered, on_time_pct, failed FROM v_driver_performance WHERE staff_id = ?", driverId));
         d.put("today", jdbc.queryForList("""
                 SELECT dl.order_id, dl.time_slot, dl.status, r.full_name AS recipient, r.city
                 FROM deliveries dl
