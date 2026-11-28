@@ -1,20 +1,20 @@
-// Who is logged in. Member 2's login pages save these after a successful login.
-const KEYS = ["token", "role", "name"];
+const KEY = "tagh-session";
 
-export function getSession() {
-  const token = localStorage.getItem("token");
-  if (!token) return null;
-  return { token, role: localStorage.getItem("role"), name: localStorage.getItem("name") || "" };
+export function getSession({ allowExpired = false } = {}) {
+  try {
+    const session = JSON.parse(sessionStorage.getItem(KEY));
+    return session?.token && (allowExpired || Date.parse(session.expiresAt) > Date.now()) ? session : null;
+  } catch {
+    return null;
+  }
 }
 
-export function saveSession({ token, role, name }) {
-  localStorage.setItem("token", token);
-  localStorage.setItem("role", role);
-  localStorage.setItem("name", name || "");
+export function saveSession({ token, role, name, expiresAt }) {
+  sessionStorage.setItem(KEY, JSON.stringify({ token, role, name, expiresAt }));
 }
 
 export function clearSession() {
-  KEYS.forEach((k) => localStorage.removeItem(k));
+  sessionStorage.removeItem(KEY);
 }
 
 export const STAFF_ROLES = ["OWNER", "ORDER_STAFF", "INVENTORY_MANAGER", "PACKER", "DRIVER"];

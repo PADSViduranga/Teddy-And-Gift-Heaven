@@ -1,14 +1,14 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Bell, Heart, LogOut, Search } from "lucide-react";
-import { clearSession, getSession } from "../utils/session";
+import { clearSession } from "../utils/session";
 import { menuFor, ROLE_LABEL } from "./menus";
-import { usePageInfo } from "./guards";
+import { usePageInfo, useStaffAccount } from "./staffContext";
 import "./StaffLayout.css";
 
 // The frame every staff page sits in: Deep Plum sidebar with the role's menu, white top bar.
 export default function StaffLayout() {
   const navigate = useNavigate();
-  const session = getSession();
+  const session = useStaffAccount();
   const page = usePageInfo();
   const groups = menuFor(session.role);
   const initials = (session.name || ROLE_LABEL[session.role] || "?")
